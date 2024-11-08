@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using EntityLayer.Concrete
+@model List<User>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int rowNum = 1; // Satır numarasını dinamik olarak başlatıyoruz.
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+<h1>User Listesi</h1>
+
+<table class="table">
+    <thead class="table-dark">
+        <!-- thead-dark yerine table-dark kullanılıyor -->
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">FirstName</th>
+            <th scope="col">LastName</th>
+            <th scope="col">UserName</th>
+            <th scope="col">Profile Picture</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Şifre</th>
+            <th scope="col">Email</th>
+            <th scope="col">Email Doğrulama</th>
+            <th scope="col">Hesap Oluşturma Tarihi</th>
+            <th scope="col">Hesap Güncelleme Tarihi</th>
+            <th scope="col">Sil</th>
+            <th scope="col">Düzenle</th>
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <!-- Dinamik satır numarası -->
+                <td>@item.Id</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>
+                    <img src="@item.ProfilePicture" alt="Profile Picture" width="50" height="50" />
+                </td> <!-- Profil resmini göstermek için img etiketi -->
+                <td>@item.PhoneNumber</td>
+                <td>@item.PasswordHash</td>
+                <td>@item.Email</td>
+                <td>@item.IsEmailVerified</td> <!-- Boolean değer için Evet/Hayır yazdırıyoruz -->
+                <td>@TimeZoneInfo.ConvertTimeFromUtc(item.CreatedAt, TimeZoneInfo.FindSystemTimeZoneById("Turkey")).ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@(item.UpdatedAt.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(item.UpdatedAt.Value, TimeZoneInfo.FindSystemTimeZoneById("Turkey")).ToString("dd.MM.yyyy HH:mm") : string.Empty)</td>
+                <td><a href="/User/DeleteUser/@item.Id" class="btn btn-danger">Sil</a></td>
+                <td><a href="/User/EditUser/@item.Id" class="btn btn-primary">Düzenle</a></td>
+            </tr>
+            rowNum++;
+            <!-- Satır numarasını artırıyoruz-->
+        }
+    </tbody>
+</table>
+
+<a asp-controller="User" asp-action="AddUser" class="btn btn-primary">User Ekle</a>
+
+

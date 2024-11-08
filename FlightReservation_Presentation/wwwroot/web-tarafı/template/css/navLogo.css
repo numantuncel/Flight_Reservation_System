@@ -1,0 +1,107 @@
+.logoo {
+    
+    position: absolute;
+    right: -720px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin: 0;
+    background: linear-gradient(
+        135deg,
+        #121620,
+        #00aeff
+      );  /* Soft gradient background */
+    font-family: "Arial", sans-serif;
+  }
+
+  /* Container for side-by-side buttons */
+  .button-containerr {
+    text-decoration: none;
+    width: 128px;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px; /* Rounded corners for the button container */
+  }
+
+  /* Styling for each button */
+  .btnnn {
+    width: 100px;
+    position: relative;
+    flex: 1;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 550;
+    color: #fff;
+    background: linear-gradient(
+        135deg,
+        #121620,
+        #00aeff
+      );  /* Gradient button background */
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    border-radius: 10px; /* Rounded corners for buttons */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    position: relative; /* Position for the airplane animation */
+  }
+
+  /* Airplane icon styling */
+  .airplane-icon {
+    position: absolute;
+    top: 50%;
+    left: -40px; /* Start off-screen */
+    transform: translateY(-50%) rotate(-30deg);
+    font-size: 24px;
+    transition: left 0.5s ease, transform 0.5s ease;
+  }
+
+  /* Trail effect for airplane */
+  .airplane-trail {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    top: 50%;
+    left: -100%;
+    transition: left 0.5s ease;
+    z-index: -1; /* Behind the buttons */
+  }
+
+  /* Hover effect for both buttons */
+  .btnnn:hover {
+    background: linear-gradient(
+      45deg,
+      #00aeff,
+      #121620
+    ); /* Reverse gradient on hover */
+    box-shadow: 0 0 25px rgba(0, 122, 255, 0.5);
+  }
+
+  /* Airplane animation on hover */
+  .btnnn:hover ~ .airplane-icon {
+    left: calc(100% + 10px); /* Move airplane across both buttons */
+    transform: translateY(-50%) rotate(30deg); /* Face right */
+  }
+
+  /* Show trail on hover */
+  .btnnn:hover ~ .airplane-trail {
+    left: 0;
+  }
+
+  /* Labels for each button */
+  .btnnn.sign-in::before {
+    content: "Login";
+  }
+
+  .btnnn.sign-up::before {
+    content: "Sign Up";
+  }
+
+  /* Adjust spacing between buttons */
+  .btnnn:not(:last-child) {
+    border-right: 2px solid rgba(255, 255, 255, 0.3); /* Divider between buttons */
+  }

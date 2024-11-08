@@ -1,0 +1,524 @@
+﻿@using FlightReservation_Presentation.Models
+@using System.Globalization
+@model FlightOffersResponse
+@{
+    Layout = null;
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<style>
+    i {
+        margin-right: 10px;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Uçuş Sonuçları</h2>
+
+    @if (Model != null && Model.data != null && Model.data.Count > 0)
+    {
+        <h3>Aktarmasız Uçuşlar</h3>
+        foreach (var flightOffer in Model.data)
+        {
+
+            foreach (var itinerary in flightOffer.itineraries)
+            {
+
+                if (itinerary.segments.Count == 1)
+                {
+
+                    foreach (var segment in itinerary.segments)
+                    {
+
+                        <div class="card mb-4 shadow">
+                            <div class="row g-0">
+                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+
+                                    <!-- Havayolu logosu için bir örnek görsel -->
+                                    @{
+                                        // Havayolu kodunu al
+                                        var carrierCode = flightOffer.itineraries.First().segments.First().carrierCode;
+                                        string logoUrl; // logoUrl burada tanımlanıyor
+
+                                        // Havayolu kodunu kullanarak logo alan adını al
+                                        var airlineDomains = new Dictionary<string, string>
+                {
+                { "TK", "thy.com" },         // Türk Hava Yolları
+                { "PC", "flypgs.com" },      // Pegasus Havayolları
+                { "AZ", "alitalia.com" },    // Alitalia
+                { "LH", "lufthansa.com" },   // Lufthansa
+                { "AF", "airfrance.com" },   // Air France
+                { "BA", "britishairways.com" }, // British Airways
+                { "KL", "klm.com" },         // KLM Royal Dutch Airlines
+                { "AA", "aa.com" },          // American Airlines
+                { "DL", "delta.com" },       // Delta Air Lines
+                { "UA", "united.com" },      // United Airlines
+                { "SQ", "singaporeair.com" }, // Singapore Airlines
+                { "EK", "emirates.com" },    // Emirates
+                { "QR", "qatarairways.com" }, // Qatar Airways
+                { "JL", "jal.co.jp" },       // Japan Airlines
+                { "NZ", "airnz.co.nz" },     // Air New Zealand
+                { "VN", "vietnamairlines.com" }, // Vietnam Airlines
+                { "VF", "volotea.com" }, // Vietnam Airlines
+                { "LX", "swiss.com" },       // Swiss International Air Lines
+                { "OS", "austrian.com" },    // Austrian Airlines
+                { "CX", "cathaypacific.com" }, // Cathay Pacific
+                { "WY", "omanair.com" },     // Oman Air
+                { "EY", "etihad.com" },      // Etihad Airways
+                { "MU", "airchinamu.com" },  // China Eastern Airlines
+                { "CA", "airchina.com" },    // Air China
+                { "CZ", "chinastateairlines.com" }, // China Southern Airlines
+                { "SA", "flysa.com" }        // South African Airways
+                // Eklemek istediğiniz diğer havayolları
+                };
+
+                                        // Logo URL'sini oluştur
+                                        string domain;
+                                        if (airlineDomains.TryGetValue(carrierCode, out domain))
+                                        {
+                                            logoUrl = $"https://img.logo.dev/{domain}?token=pk_PVhngkmmT36MKZymARmxvQ"; // Burada API anahtarınızı ekleyin
+                                        }
+                                        else
+                                        {
+                                            // Eğer havayolu kodu bulunamazsa, varsayılan bir URL kullanabilirsiniz
+                                            logoUrl = "https://via.placeholder.com/100"; // Varsayılan görsel
+                                        }
+                                    }
+
+                                    <img src="@logoUrl" class="img-fluid rounded-start" alt="@carrierCode Logosu" onerror="this.src='https://via.placeholder.com/100';" />
+
+                                </div>
+                                <div class="col-md-10">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fa-solid fa-plane"></i> Uçuş Bilgisi: @flightOffer.id
+                                        </h5>
+                                        <table class="table table-borderless mt-3">
+                                            <tbody>
+
+
+                                                <tr>
+                                                    <td><i class="fa-solid fa-compass"></i>  Havayolu:</td>
+                                                    @{
+                                                        var domesticCarrierCodes = new Dictionary<string, string>
+                                {
+                                { "PC", "Pegasus Airlines" },
+                                { "TK", "Turkish Airlines" },
+                                { "XQ", "SunExpress" },
+                                { "H9", "Onur Air" },
+                                { "YC", "Corendon Airlines" },
+                                { "FZ", "Flynas" }, // Dönüşümlü olarak Türkiye'ye hizmet ediyor
+                                { "SC", "Sky Airlines" },
+                                { "VF", "Volotea Airlines" }
+                                };
+
+                                                        string firmaName = "";
+                                                        if (domesticCarrierCodes.TryGetValue(segment.carrierCode, out firmaName))
+                                                        {
+                                                            <td>@firmaName</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@segment.carrierCode</td>
+                                                        }
+                                                    }
+
+
+                                                    <td><i class="fa-solid fa-plane-departure"></i>  Kalkış:</td>
+                                                    @{
+                                                        var airportNames = new Dictionary<string, string>
+                                {
+                                { "IST", "İstanbul Havalimanı" },
+                                { "SAW", "Sabiha Gökçen Havalimanı" },
+                                { "ADB", "Adnan Menderes Havalimanı" },
+                                { "AYT", "Antalya Havalimanı" },
+                                { "DLM", "Dalaman Havalimanı" },
+                                { "BJV", "Bodrum-Milas Havalimanı" },
+                                { "ESB", "Esenboğa Havalimanı" },
+                                { "TKY", "Tokat Havalimanı" },
+                                { "KYA", "Konya Havalimanı" },
+                                { "NAV", "Nevşehir Kapadokya Havalimanı" },
+                                { "TRB", "Trabzon Havalimanı" },
+                                { "SZF", "Samsun Çarşamba Havalimanı" },
+                                { "OGU", "Ordu-Giresun Havalimanı" },
+                                { "MZS", "Mardin Havalimanı" },
+                                { "DIY", "Diyarbakır Havalimanı" },
+                                { "GAZ", "Gaziantep Havalimanı" },
+                                { "ADA", "Adana Şakirpaşa Havalimanı" },
+                                { "ZTZ", "Zonguldak Havalimanı" },
+                                { "ISL", "İslahiye Havalimanı" },
+                                { "LTF", "Lüleburgaz Havalimanı" },
+                                { "KZR", "Kars Harakani Havalimanı" },
+                                { "NKT", "Niğde Havalimanı" },
+                                { "KLD", "Kastamonu Havalimanı" },
+                                { "EZS", "Erzincan Havalimanı" },
+                                { "PZG", "Pınarbaşı Havalimanı" },
+                                { "VAN", "Van Ferit Melen Havalimanı" }
+                                };
+
+                                                        // departure.iataCode değerini kullanarak havaalanı adını al
+                                                        string airportName;
+                                                        if (airportNames.TryGetValue(segment.departure.iataCode, out airportName))
+                                                        {
+                                                            <td>@airportName - @segment.departure.at.ToString("g")</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            // Eğer havaalanı kodu bulunamazsa, varsayılan bir değer göster
+                                                            <td>@segment.departure.iataCode - @segment.departure.at.ToString("g")</td>
+                                                        }
+                                                    }
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-fill"></i>  Uçuş Numarası:</td>
+                                                    <td>@segment.number</td>
+                                                    <td><i class="fa-solid fa-plane-arrival"></i>  Varış:</td>
+                                                    @{
+                                                        var airportNamess = new Dictionary<string, string>
+                                {
+                                { "IST", "İstanbul Havalimanı" },
+                                { "SAW", "Sabiha Gökçen Havalimanı" },
+                                { "ADB", "Adnan Menderes Havalimanı" },
+                                { "AYT", "Antalya Havalimanı" },
+                                { "DLM", "Dalaman Havalimanı" },
+                                { "BJV", "Bodrum-Milas Havalimanı" },
+                                { "ESB", "Esenboğa Havalimanı" },
+                                { "TKY", "Tokat Havalimanı" },
+                                { "KYA", "Konya Havalimanı" },
+                                { "NAV", "Nevşehir Kapadokya Havalimanı" },
+                                { "TRB", "Trabzon Havalimanı" },
+                                { "SZF", "Samsun Çarşamba Havalimanı" },
+                                { "OGU", "Ordu-Giresun Havalimanı" },
+                                { "MZS", "Mardin Havalimanı" },
+                                { "DIY", "Diyarbakır Havalimanı" },
+                                { "GAZ", "Gaziantep Havalimanı" },
+                                { "ADA", "Adana Şakirpaşa Havalimanı" },
+                                { "ZTZ", "Zonguldak Havalimanı" },
+                                { "ISL", "İslahiye Havalimanı" },
+                                { "LTF", "Lüleburgaz Havalimanı" },
+                                { "KZR", "Kars Harakani Havalimanı" },
+                                { "NKT", "Niğde Havalimanı" },
+                                { "KLD", "Kastamonu Havalimanı" },
+                                { "EZS", "Erzincan Havalimanı" },
+                                { "PZG", "Pınarbaşı Havalimanı" },
+                                { "VAN", "Van Ferit Melen Havalimanı" }
+                                };
+
+                                                        // departure.iataCode değerini kullanarak havaalanı adını al
+
+                                                        if (airportNames.TryGetValue(segment.arrival.iataCode, out airportName))
+                                                        {
+                                                            <td>@airportName - @segment.arrival.at.ToString("g")</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            // Eğer havaalanı kodu bulunamazsa, varsayılan bir değer göster
+                                                            <td>@segment.arrival.iataCode - @segment.arrival.at.ToString("g")</td>
+                                                        }
+                                                    }
+
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-couch"></i> Kabin Sınıfı:</td>
+                                                    <td colspan="3">
+                                                        @foreach (var fareDetail in flightOffer.travelerPricings.SelectMany(tp => tp.fareDetailsBySegment).Where(fd => fd.segmentId == segment.id))
+                                                        {
+                                                            @fareDetail.cabin <br />
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-cart-flatbed-suitcase"></i> Bagaj Ağırlığı (KG):</td>
+                                                    <td colspan="3">
+                                                        @foreach (var fareDetail in flightOffer.travelerPricings.SelectMany(tp => tp.fareDetailsBySegment).Where(fd => fd.segmentId == segment.id))
+                                                        {
+                                                            @fareDetail.includedCheckedBags.weight <br />
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-euro-sign"></i> Bilet Fiyatı:</td>
+                                                    <td>@string.Format("{0:C}", flightOffer.price.total)<span>€</span></td>
+                                                    <td><i class="fa-solid fa-qrcode"></i> QR Kod:</td>
+                                                    <td>QR kod eklenecek</td>
+                                                    <td><a href="User/BiletAl/" class="btn btn-primary">Bilet Al</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                   
+                }
+            }
+        }
+
+
+    }
+
+
+
+    @if (Model != null && Model.data != null && Model.data.Count > 0)
+    {
+        <h3>Aktarmalı Uçuşlar</h3>
+        foreach (var flightOffer in Model.data)
+        {
+
+            @foreach (var itinerary in flightOffer.itineraries)
+            {
+
+                if (itinerary.segments.Count > 1)
+                {
+
+
+
+                    <div class="card mb-4 shadow">
+                        <div class="row g-0">
+                            @foreach (var segment in itinerary.segments)
+                            {
+                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                    <!-- Havayolu logosu için bir örnek görsel -->
+                                    @{
+                                        // Havayolu kodunu al
+                                        var carrierCode = flightOffer.itineraries.First().segments.First().carrierCode;
+                                        string logoUrl; // logoUrl burada tanımlanıyor
+
+                                        // Havayolu kodunu kullanarak logo alan adını al
+                                        var airlineDomains = new Dictionary<string, string>
+                {
+                { "TK", "thy.com" },         // Türk Hava Yolları
+                { "PC", "flypgs.com" },      // Pegasus Havayolları
+                { "AZ", "alitalia.com" },    // Alitalia
+                { "LH", "lufthansa.com" },   // Lufthansa
+                { "AF", "airfrance.com" },   // Air France
+                { "BA", "britishairways.com" }, // British Airways
+                { "KL", "klm.com" },         // KLM Royal Dutch Airlines
+                { "AA", "aa.com" },          // American Airlines
+                { "DL", "delta.com" },       // Delta Air Lines
+                { "UA", "united.com" },      // United Airlines
+                { "SQ", "singaporeair.com" }, // Singapore Airlines
+                { "EK", "emirates.com" },    // Emirates
+                { "QR", "qatarairways.com" }, // Qatar Airways
+                { "JL", "jal.co.jp" },       // Japan Airlines
+                { "NZ", "airnz.co.nz" },     // Air New Zealand
+                { "VN", "vietnamairlines.com" }, // Vietnam Airlines
+                { "VF", "volotea.com" }, // Vietnam Airlines
+                { "LX", "swiss.com" },       // Swiss International Air Lines
+                { "OS", "austrian.com" },    // Austrian Airlines
+                { "CX", "cathaypacific.com" }, // Cathay Pacific
+                { "WY", "omanair.com" },     // Oman Air
+                { "EY", "etihad.com" },      // Etihad Airways
+                { "MU", "airchinamu.com" },  // China Eastern Airlines
+                { "CA", "airchina.com" },    // Air China
+                { "CZ", "chinastateairlines.com" }, // China Southern Airlines
+                { "SA", "flysa.com" }        // South African Airways
+                // Eklemek istediğiniz diğer havayolları
+                };
+
+                                        // Logo URL'sini oluştur
+                                        string domain;
+                                        if (airlineDomains.TryGetValue(carrierCode, out domain))
+                                        {
+                                            logoUrl = $"https://img.logo.dev/{domain}?token=pk_PVhngkmmT36MKZymARmxvQ"; // Burada API anahtarınızı ekleyin
+                                        }
+                                        else
+                                        {
+                                            // Eğer havayolu kodu bulunamazsa, varsayılan bir URL kullanabilirsiniz
+                                            logoUrl = "https://via.placeholder.com/100"; // Varsayılan görsel
+                                        }
+                                    }
+
+                                    <img src="@logoUrl" class="img-fluid rounded-start" alt="@carrierCode Logosu" onerror="this.src='https://via.placeholder.com/100';" />
+
+
+
+                                </div>
+
+
+                                <div class="col-md-10">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fa-solid fa-plane"></i> Uçuş Bilgisi: @flightOffer.id
+                                        </h5>
+                                        <table class="table table-borderless mt-3">
+                                            <tbody>
+
+
+                                                <tr>
+                                                    <td><i class="fa-solid fa-compass"></i>  Havayolu:</td>
+                                                    @{
+                                                        var domesticCarrierCodes = new Dictionary<string, string>
+                                {
+                                { "PC", "Pegasus Airlines" },
+                                { "TK", "Turkish Airlines" },
+                                { "XQ", "SunExpress" },
+                                { "H9", "Onur Air" },
+                                { "YC", "Corendon Airlines" },
+                                { "FZ", "Flynas" }, // Dönüşümlü olarak Türkiye'ye hizmet ediyor
+                                { "SC", "Sky Airlines" },
+                                { "VF", "Volotea Airlines" }
+                                };
+
+                                                        string firmaName = "";
+                                                        if (domesticCarrierCodes.TryGetValue(segment.carrierCode, out firmaName))
+                                                        {
+                                                            <td>@firmaName</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@segment.carrierCode</td>
+                                                        }
+                                                    }
+
+
+                                                    <td><i class="fa-solid fa-plane-departure"></i>  Kalkış:</td>
+                                                    @{
+                                                        var airportNames = new Dictionary<string, string>
+                                {
+                                { "IST", "İstanbul Havalimanı" },
+                                { "SAW", "Sabiha Gökçen Havalimanı" },
+                                { "ADB", "Adnan Menderes Havalimanı" },
+                                { "AYT", "Antalya Havalimanı" },
+                                { "DLM", "Dalaman Havalimanı" },
+                                { "BJV", "Bodrum-Milas Havalimanı" },
+                                { "ESB", "Esenboğa Havalimanı" },
+                                { "TKY", "Tokat Havalimanı" },
+                                { "KYA", "Konya Havalimanı" },
+                                { "NAV", "Nevşehir Kapadokya Havalimanı" },
+                                { "TRB", "Trabzon Havalimanı" },
+                                { "SZF", "Samsun Çarşamba Havalimanı" },
+                                { "OGU", "Ordu-Giresun Havalimanı" },
+                                { "MZS", "Mardin Havalimanı" },
+                                { "DIY", "Diyarbakır Havalimanı" },
+                                { "GAZ", "Gaziantep Havalimanı" },
+                                { "ADA", "Adana Şakirpaşa Havalimanı" },
+                                { "ZTZ", "Zonguldak Havalimanı" },
+                                { "ISL", "İslahiye Havalimanı" },
+                                { "LTF", "Lüleburgaz Havalimanı" },
+                                { "KZR", "Kars Harakani Havalimanı" },
+                                { "NKT", "Niğde Havalimanı" },
+                                { "KLD", "Kastamonu Havalimanı" },
+                                { "EZS", "Erzincan Havalimanı" },
+                                { "PZG", "Pınarbaşı Havalimanı" },
+                                { "VAN", "Van Ferit Melen Havalimanı" }
+                                };
+
+                                                        // departure.iataCode değerini kullanarak havaalanı adını al
+                                                        string airportName;
+                                                        if (airportNames.TryGetValue(segment.departure.iataCode, out airportName))
+                                                        {
+                                                            <td>@airportName - @segment.departure.at.ToString("g")</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            // Eğer havaalanı kodu bulunamazsa, varsayılan bir değer göster
+                                                            <td>@segment.departure.iataCode - @segment.departure.at.ToString("g")</td>
+                                                        }
+                                                    }
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-fill"></i>  Uçuş Numarası:</td>
+                                                    <td>@segment.number</td>
+                                                    <td><i class="fa-solid fa-plane-arrival"></i>  Varış:</td>
+                                                    @{
+                                                        var airportNamess = new Dictionary<string, string>
+                                {
+                                { "IST", "İstanbul Havalimanı" },
+                                { "SAW", "Sabiha Gökçen Havalimanı" },
+                                { "ADB", "Adnan Menderes Havalimanı" },
+                                { "AYT", "Antalya Havalimanı" },
+                                { "DLM", "Dalaman Havalimanı" },
+                                { "BJV", "Bodrum-Milas Havalimanı" },
+                                { "ESB", "Esenboğa Havalimanı" },
+                                { "TKY", "Tokat Havalimanı" },
+                                { "KYA", "Konya Havalimanı" },
+                                { "NAV", "Nevşehir Kapadokya Havalimanı" },
+                                { "TRB", "Trabzon Havalimanı" },
+                                { "SZF", "Samsun Çarşamba Havalimanı" },
+                                { "OGU", "Ordu-Giresun Havalimanı" },
+                                { "MZS", "Mardin Havalimanı" },
+                                { "DIY", "Diyarbakır Havalimanı" },
+                                { "GAZ", "Gaziantep Havalimanı" },
+                                { "ADA", "Adana Şakirpaşa Havalimanı" },
+                                { "ZTZ", "Zonguldak Havalimanı" },
+                                { "ISL", "İslahiye Havalimanı" },
+                                { "LTF", "Lüleburgaz Havalimanı" },
+                                { "KZR", "Kars Harakani Havalimanı" },
+                                { "NKT", "Niğde Havalimanı" },
+                                { "KLD", "Kastamonu Havalimanı" },
+                                { "EZS", "Erzincan Havalimanı" },
+                                { "PZG", "Pınarbaşı Havalimanı" },
+                                { "VAN", "Van Ferit Melen Havalimanı" }
+                                };
+
+                                                        // departure.iataCode değerini kullanarak havaalanı adını al
+
+                                                        if (airportNames.TryGetValue(segment.arrival.iataCode, out airportName))
+                                                        {
+                                                            <td>@airportName - @segment.arrival.at.ToString("g")</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            // Eğer havaalanı kodu bulunamazsa, varsayılan bir değer göster
+                                                            <td>@segment.arrival.iataCode - @segment.arrival.at.ToString("g")</td>
+                                                        }
+                                                    }
+
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-couch"></i> Kabin Sınıfı:</td>
+                                                    <td colspan="3">
+                                                        @foreach (var fareDetail in flightOffer.travelerPricings.SelectMany(tp => tp.fareDetailsBySegment).Where(fd => fd.segmentId == segment.id))
+                                                        {
+                                                            @fareDetail.cabin <br />
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-cart-flatbed-suitcase"></i> Bagaj Ağırlığı (KG):</td>
+                                                    <td colspan="3">
+                                                        @foreach (var fareDetail in flightOffer.travelerPricings.SelectMany(tp => tp.fareDetailsBySegment).Where(fd => fd.segmentId == segment.id))
+                                                        {
+                                                            @fareDetail.includedCheckedBags.weight <br />
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fa-solid fa-euro-sign"></i> Bilet Fiyatı:</td>
+                                                    <td>@string.Format("{0:C}", flightOffer.price.total)<span>€</span></td>
+                                                    <td><i class="fa-solid fa-qrcode"></i> QR Kod:</td>
+                                                    <td>QR kod eklenecek</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+
+
+
+
+
+                }
+            }
+        }
+    }
+
+    else
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            ""
+            Bilet bilgisi bulunamadı.
+        </div>
+    }
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/e9a187851c.js" crossorigin="anonymous"></script>
+

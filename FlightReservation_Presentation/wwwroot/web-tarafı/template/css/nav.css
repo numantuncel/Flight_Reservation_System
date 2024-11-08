@@ -1,0 +1,66 @@
+.navBar {
+    background-color: #333; /* Change to your desired background color */
+    padding: 47px 20px !important; /* Adjust padding as needed */
+    z-index: 1032 !important;
+    top: 0 !important;
+
+}
+
+.navDiv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between logo and login button */
+    position: relative; /* To position navLinks absolutely */
+}
+
+.logo {
+    position: absolute;
+    left: -680px;
+}
+
+.logoImage {
+    height: 50px; /* Adjust logo size */
+}
+
+.navLinks {
+    display: flex; /* Use flexbox for horizontal layout */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: absolute; /* Allows centering */
+    left: 50%; /* Start centering */
+    transform: translateX(-50%); /* Centers the element */
+}
+
+.navLink {
+    margin: 0 15px; /* Space between links */
+}
+
+.navLinkA {
+    text-decoration: none;
+    color: white; /* Link color */
+    transition: color 0.3s; /* Transition effect */
+}
+
+.navLinkA:hover {
+    color: #ffcc00; /* Hover color */
+}
+
+.loginButton {
+    flex: 0 0 auto; /* Fixes login button size */
+    position: absolute;
+    right: -680px;
+}
+
+.loginLink {
+    text-decoration: none;
+    color: white; /* Button text color */
+    padding: 10px 15px; /* Button padding */
+    background-color: #007bff; /* Button background color */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Transition effect */
+}
+
+.loginLink:hover {
+    background-color: #0056b3; /* Hover effect for button */
+}

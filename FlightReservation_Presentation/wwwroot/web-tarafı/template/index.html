@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Flight Reservation System</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css" />
+    <!-- endinject -->
+    <!-- plugin css for this page -->
+    <link
+      rel="stylesheet"
+      href="vendors/datatables.net-bs4/dataTables.bootstrap4.css"
+    />
+    <link rel="stylesheet" href="css/biletGet.css">
+    <!-- End plugin css for this page -->
+     <link rel="stylesheet" href="css/adminlogo.css">
+    <!-- inject:css -->
+     <link rel="stylesheet" href="css/navLogo.css">
+    <!-- nav css -->
+    <link rel="stylesheet" href="css/nav.css">
+
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- Event -->
+    <link rel="stylesheet" href="css/event.css" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="images/netucus.png" />
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- jQuery DateTime Picker CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+
+<!-- jQuery DateTime Picker JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+    <style>
+      .step {
+        display: none; /* Başlangıçta tüm adımları gizle */
+      }
+      .active {
+        display: block; /* Aktif adımı göster */
+      }
+      .button-container {
+        margin-top: 20px;
+      }
+      button {
+        width: 48%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      .next-btn {
+        background-color: #007bff;
+        color: white;
+      }
+      .prev-btn {
+        background-color: #6c757d;
+        color: white;
+      }
+      .swap-button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+        margin: 10px 0;
+      }
+      .arrow {
+        display: inline-block;
+        font-size: 24px;
+        margin: 0 10px;
+        vertical-align: middle;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container-scroller">
+      <!-- <div class="row p-0 m-0 proBanner" id="proBanner">
+        <div class="col-md-12 p-0 m-0">
+          <div
+            class="card-body card-body-padding d-flex align-items-center justify-content-between"
+          >
+            <div class="ps-lg-1">
+              <div
+                class="d-flex align-items-center justify-content-between"
+              ></div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <button id="bannerClose" class="btn border-0 p-0">
+                <i class="mdi mdi-close text-white me-0"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- partial:partials/_navbar.html -->
+      <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="navbar-brand-wrapper d-flex justify-content-center">
+          <div
+            class="navbar-brand-inner-wrapper d-flex justify-content-center align-items-center w-100"
+          >
+            <div class="numanLogo">
+              <a class="navbar-brand brand-logo" href="#"
+                ><img
+                  style="border-radius: 50%; width: 100%; height: 100%"
+                  src="images/netucus.png"
+              /></a>
+            </div>
+            <a class="navbar-brand brand-logo-mini" href="/template/index.html"
+              ><img
+                style="border-radius: 50%; width: 100%; height: 100%"
+                src="images\netucus.png"
+            /></a>
+
+            <!-- <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-sort-variant"></span>
+            </button> -->
+          </div>
+        </div>
+        <div
+          class="navbar-menu-wrapper d-flex align-items-center justify-content-end"
+        >
+          <ul class="navbar-nav mr-lg-4 w-100">
+            <li class="nav-item nav-search d-none d-lg-block w-100">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="search">
+                    <i class="mdi mdi-magnify"></i>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search now"
+                  aria-label="search"
+                  aria-describedby="search"
+                />
+              </div>
+            </li>
+          </ul>
+          <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item dropdown me-1">
+              <a
+                class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center"
+                id="messageDropdown"
+                href="#"
+                data-bs-toggle="dropdown"
+              >
+                <i class="mdi mdi-message-text mx-0"></i>
+                <span class="count"></span>
+              </a>
+              <div
+                class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                aria-labelledby="messageDropdown"
+              >
+                <p class="mb-0 font-weight-normal float-left dropdown-header">
+                  Messages
+                </p>
+                <a class="dropdown-item">
+                  <div class="item-thumbnail">
+                    <img
+                      src="images/faces/face4.jpg"
+                      alt="image"
+                      class="profile-pic"
+                    />
+                  </div>
+                  <div class="item-content flex-grow">
+                    <h6 class="ellipsis font-weight-normal">David Grey</h6>
+                    <p class="font-weight-light small-text text-muted mb-0">
+                      The meeting is cancelled
+                    </p>
+                  </div>
+                </a>
+                <a class="dropdown-item">
+                  <div class="item-thumbnail">
+                    <img
+                      src="images/faces/face2.jpg"
+                      alt="image"
+                      class="profile-pic"
+                    />
+                  </div>
+                  <div class="item-content flex-grow">
+                    <h6 class="ellipsis font-weight-normal">Tim Cook</h6>
+                    <p class="font-weight-light small-text text-muted mb-0">
+                      New product launch
+                    </p>
+                  </div>
+                </a>
+                <a class="dropdown-item">
+                  <div class="item-thumbnail">
+                    <img
+                      src="images/faces/face3.jpg"
+                      alt="image"
+                      class="profile-pic"
+                    />
+                  </div>
+                  <div class="item-content flex-grow">
+                    <h6 class="ellipsis font-weight-normal">Johnson</h6>
+                    <p class="font-weight-light small-text text-muted mb-0">
+                      Upcoming board meeting
+                    </p>
+                  </div>
+                </a>
+              </div>
+            </li>
+            <li class="nav-item dropdown me-4">
+              <a
+                class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center notification-dropdown"
+                id="notificationDropdown"
+                href="#"
+                data-bs-toggle="dropdown"
+              >
+                <i class="mdi mdi-bell mx-0"></i>
+                <span class="count"></span>
+              </a>
+              <div
+                class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                aria-labelledby="notificationDropdown"
+              >
+                <p class="mb-0 font-weight-normal float-left dropdown-header">
+                  Notifications
+                </p>
+                <a class="dropdown-item">
+                  <div class="item-thumbnail">
+                    <div class="item-icon bg-success">
+                      <i class="mdi mdi-information mx-0"></i>
+                    </div>
+                  </div>
+                  <div class="item-content">
+                    <h6 class="font-weight-normal">Application Error</h6>
+                    <p class="font-weight-light small-text mb-0 text-muted">
+                      Just now
+                    </p>
+                  </div>
+                </a>
+                <a class="dropdown-item">
+                  <div class="item-thumbnail">
+                    <div class="item-icon bg-warning">
+                      <i class="mdi mdi-settings mx-0"></i>
+                    </div>
+                  </div>
+                  <div class="item-content">
+                    <h6 class="font-weight-normal">Settings</h6>
+                    <p class="font-weight-light small-text mb-0 text-muted">
+                      Private message
+                    </p>
+                  </div>
+                </a>
+                <a class="dropdown-item">
+                  <div class="item-thumbnail">
+                    <div class="item-icon bg-info">
+                      <i class="mdi mdi-account-box mx-0"></i>
+                    </div>
+                  </div>
+                  <div class="item-content">
+                    <h6 class="font-weight-normal">New user registration</h6>
+                    <p class="font-weight-light small-text mb-0 text-muted">
+                      2 days ago
+                    </p>
+                  </div>
+                </a>
+              </div>
+            </li>
+            <li class="nav-item nav-profile dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                data-bs-toggle="dropdown"
+                id="profileDropdown"
+              >
+                <img src="images/numantunçelresim.png" alt="profile" />
+                <span class="nav-profile-name">Numan Tunçel</span>
+              </a>
+              <div
+                class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                aria-labelledby="profileDropdown"
+              >
+                <a class="dropdown-item">
+                  <i class="mdi mdi-settings text-primary"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item">
+                  <i class="mdi mdi-logout text-primary"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+          </ul>
+          <button
+            class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+            type="button"
+            data-toggle="offcanvas"
+          >
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        <!-- <nav class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">
+                <i class="mdi mdi-home menu-icon"></i>
+                <span class="menu-title">Admin</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="kullanıcı.html">
+                <i class="mdi mdi-account menu-icon"></i>
+                <span class="menu-title">Kullanıcı Yönetimi</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/Event/EtkinlikListele">
+                <i class="fa-regular fa-calendar fa-xs menu-icon"></i>
+                <span class="menu-title">Etkinlik Yönetimi</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa-solid fa-ticket fa-xs menu-icon"></i>
+                <span class="menu-title">Bilet Yönetimi</span>
+              </a>
+            </li>
+          </ul>
+        </nav> -->
+        <!-- partial -->
+        <div class="main-panel">
+            
+          <div class="video-background">
+            <video autoplay muted loop playsinline>
+                <source src="images/32975-394513987_medium.mp4" type="video/mp4">
+                
+            </video>
+            <!-- Diğer içerikler buraya -->
+          </div>
+          <div class="content-wrapper">
+            
+            <nav class="navBar">
+              <div class="navDiv">
+                <div class="logo">
+                  <img style="border-radius: 50%; width: 50px;" src="images/netucus.png" alt="Logo" class="logoImage" />
+                </div>
+                <ul class="navLinks" id="navLinks">
+                  <li class="navLink">
+                      <a href="#" class="navLinkA">Anasayfa</a>
+                  </li>
+                  <li class="navLink">
+                      <a href="#" class="navLinkA">Biletler</a>
+                  </li>
+                  <li class="navLink">
+                      <a href="#Event" class="navLinkA">Etkinlikler</a>
+                  </li>
+                  <li class="navLink">
+                      <a href="#about" class="navLinkA">Hakkımızda</a>
+                  </li>
+                  <li class="navLink">
+                      <a href="#contact" class="navLinkA">İletişim</a>
+                  </li>
+                </ul>
+                <div class="logoo">
+                  <div  class="button-containerr">
+                    <!-- Sign In Button -->
+                    <button class="btnnn sign-in">
+                      <div class="airplane-trail"></div>
+                      <span class="airplane-icon">✈️</span>
+                    </button>
+            
+                    <!-- Sign Up Button -->
+                    <!-- <button class="btnnn sign-up">
+                      <div class="airplane-trail"></div>
+                      <span class="airplane-icon"></span>
+                    </button> -->
+                  </div>
+                </div>
+              </div>
+            </nav>
+            
+            <div class="row-wrapper" >
+              <div class="biletGet">
+                <form class="biletGetForm">
+                  <div class="biletRadio">
+                    <div class="biletLabel">
+                      <span class="biletSpan">Gidiş</span>
+                      <input class="biletInput" type="radio" name="option" value="Option1" checked>
+                    </div>
+                    <br>
+                    <div class="biletLabel">
+                      <span class="biletSpan">Gidiş-Dönüş</span>
+                      <input class="biletInput" type="radio" name="option" value="Option2">
+                    </div>
+                  </div>
+                  <div class="biletForm">
+                    <div class="biletsehirDiv">
+                      <select class="sehir" id="sehir1" name="sehir">
+                        <option value="">Nerden...</option>
+                        <option value="IST">İstanbul</option>
+                        <option value="ESB">Ankara</option>
+                        <option value="ADB">İzmir</option>
+                        <option value="AYT">Antalya</option>
+                        <option value="BJV">Bodrum</option>
+                        <option value="DLM">Dalaman</option>
+                        <option value="TZX">Trabzon</option>
+                        <option value="GZT">Gaziantep</option>
+                        <option value="ADA">Adana</option>
+                        <option value="EZS">Elazığ</option>
+                        <option value="KYA">Konya</option>
+                        <option value="ERZ">Erzurum</option>
+                        <option value="VAN">Van</option>
+                        <option value="MLX">Malatya</option>
+                        <option value="DNZ">Denizli</option>
+                        <option value="NAV">Nevşehir</option>
+                      </select>
+                      
+                      <div class="turnSehir" onclick="swapSelectValues()">
+                        <div class="lineeLeft">
+                          <i class="fa-solid fa-right-left"></i>
+                        </div>
+                      </div>
+                      
+                      <select class="sehir" id="sehir2" name="sehir">
+                        <option value="">Nereye...</option>
+                        <option value="IST">İstanbul</option>
+                        <option value="ESB">Ankara</option>
+                        <option value="ADB">İzmir</option>
+                        <option value="AYT">Antalya</option>
+                        <option value="BJV">Bodrum</option>
+                        <option value="DLM">Dalaman</option>
+                        <option value="TZX">Trabzon</option>
+                        <option value="GZT">Gaziantep</option>
+                        <option value="ADA">Adana</option>
+                        <option value="EZS">Elazığ</option>
+                        <option value="KYA">Konya</option>
+                        <option value="ERZ">Erzurum</option>
+                        <option value="VAN">Van</option>
+                        <option value="MLX">Malatya</option>
+                        <option value="DNZ">Denizli</option>
+                        <option value="NAV">Nevşehir</option>
+                      </select>
+                    </div>
+                    
+                    <div class="biletdateDiv">
+                      <input class="biletDate" type="text" id="datetimepicker1" placeholder="Gidiş Tarihi">
+                      <input class="biletDate" type="text" id="datetimepicker2" placeholder="Dönüş Tarihi">
+                    </div>
+                    <div class="yolcuSayısıDiv">
+                      <i class="fa-solid fa-user"></i>
+                      <input placeholder="0" class="yolcuSayısı" type="number" id="quantity" name="quantity" min="1" max="10" value="1">
+                    </div>
+                    <div class="ucusSınıfıDiv biletsehirDiv">
+                      <select class="sehir" id="sehir" name="sehir">
+                        <option value="value">Uçuş Türü</option>
+                        <option value="istanbul">Ekonomi</option>
+                        <option value="ankara">Business</option>
+                      </select>
+                    </div>
+                   
+                  </div>
+                  <div class="biletBulDiv">
+                    <a class="abtn">Bilet Al</a>
+                  </div>
+                </form>
+              </div>
+              <!-- Js kodları login panelin içindedir -->
+              <div class="loginPanel" style="display: none;">
+                <div class="cont">
+                <div class="formm sign-in">
+                    <h2>Welcome</h2>
+                    <form action="">
+                      <label class="labell">
+                        <span>EMAİL</span>
+                        <input class="inputtt"  type="email" />
+                    </label>
+                    <label class="labell">
+                        <span>Password</span>
+                        <input class="inputtt"  type="password" />
+                    </label>
+                    <p class="forgot-pass">Forgot password?</p>
+                    <button type="button" class="submitt">Sign In</button>
+                    </form>
+                    
+                 
+                </div>
+                <div class="sub-cont">
+        
+                    <div class="imgg">
+                        <div class="img__text m--up">
+                            <h3>Don't have an account? Please Sign up!<h3>
+                            <img style="width: 60px; height: 60px; border-radius: 50%; margin-top: 100px;" src="images/netucus.png" alt="">
+                        </div>
+                        
+                            
+                       
+                        <div class="img__text m--in">
+                        
+                            <h3>If you already has an account, just sign in.<h3>
+                            <img style="width: 60px; height: 60px; border-radius: 50%; margin-top: 100px;" src="images/netucus.png" alt="">
+        
+                        </div>
+                        <div class="img__btn">
+                            <span class="m--up">Sign Up</span>
+                            <span class="m--in">Sign In</span>
+                        </div>
+                    </div>
+                    <div class="formm sign-up">
+                        <h2>Create your Account</h2>
+        
+                        <label class="labell">
+                            <span>Name</span>
+                            <input class="inputtt"  type="text" />
+                        </label>
+                        <label class="labell">
+                            <span>Surname</span>
+                            <input class="inputtt"  type="text" />
+                        </label>
+                        <label class="labell">
+                            <span>Phone Number</span>
+                            <input class="inputtt" type="text" />
+                        </label>
+                        <label class="labell">
+                            <span>Email</span>
+                            <input class="inputtt" type="email" />
+                        </label>
+                        <label class="labell">
+                            <span>Password</span>
+                            <input class="inputtt"  type="password" />
+                        </label>
+                        
+                        <button type="button" class="submitt">Sign Up</button>
+                        
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          <!-- <footer class="footer">
+
+          </footer> -->
+          <!-- partial -->
+        </div>
+
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <section class="Event" id="Event">
+      <div class="line"></div>
+      <div class="Events">
+        <div class="EventSerachDiv">
+          <form class="search-container">
+            <input id="search-box" type="text" class="search-box" name="q" placeholder="Etkinlik Ara..."/>
+            <label for="search-box">
+              <i class="fas fa-search search-icon"></i>
+            </label>
+           
+          </form>
+        </div>
+          <div class="EventTitle">
+            <h2>ETKİNLİKLER</h2>
+          </div>
+         
+       
+
+        <div class="EventsDiv">   
+          <div class="EventDiv">
+            <div class="EventImage">
+              <img src="EventImages/buray-konser.png" alt="" />
+            </div>
+            <div class="EventDescription">
+              <div class="name-time">
+                <h3>Buray Konser</h3>
+                <p>Kalan süre</p>
+              </div>
+              <div class="tag-capacity">
+                <a href="">Etiket</a>
+                <p>kapasite</p>
+              </div>
+            </div>
+          </div>
+          <div class="EventDiv">
+            <div class="EventImage">
+              <img src="EventImages/konser2.jpg" alt="" />
+            </div>
+            <div class="EventDescription">
+              <div class="name-time">
+                <h3>Buray Konser</h3>
+                <p>Kalan süre</p>
+              </div>
+              <div class="tag-capacity">
+                <a href="">Etiket</a>
+                <p>kapasite</p>
+              </div>
+            </div>
+          </div>
+          <div class="EventDiv">
+            <div class="EventImage">
+              <img src="EventImages/koonser3.jpeg" alt="" />
+            </div>
+            <div class="EventDescription">
+              <div class="name-time">
+                <h3>Buray Konser</h3>
+                <p>Kalan süre</p>
+              </div>
+              <div class="tag-capacity">
+                <a href="">Etiket</a>
+                <p>kapasite</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="about" id="about">
+      <div class="line"></div>
+      <div class="aboutDiv">
+        <div class="AboutTitle">
+          <h2>HAKKIMIZDA</h2>
+        </div>
+        <div class="about-write">
+          <div class="aboutImage">
+            <img src="AboutImages/ntarkaplan.png" />
+          </div>
+          <div class="aboutInfo">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iusto ea
+            ex excepturi, doloribus assumenda commodi iste doloremque quaerat
+            magni nam saepe blanditiis voluptate tenetur dolores laboriosam?
+            Consequuntur recusandae dolor ea. Lorem ipsum dolor sit amet
+            consectetur adipisicing elit. Porro aperiam libero vero similique
+            rem pariatur perferendis mollitia et? Praesentium corporis natus,
+            exercitationem quia iure iste ipsam quam numquam asperiores cum.
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="contact" id="contact">
+      <div class="line"></div>
+      <div class="contactTitle">
+        <h2>İLETİŞİM</h2>
+      </div>
+      <div class="contactDiv">
+        <div class="mainDiv">
+          <form id="form" novalidate><!--
+            HTML'de novalidate özelliği, form gönderimi sırasında tarayıcının varsayılan form doğrulama işlemlerini devre dışı bırakır. 
+            Normalde, bir form gönderildiğinde tarayıcı, doldurulması gereken alanlar, doğru formatta girilmiş e-posta adresleri gibi şeyleri kontrol eder.
+             Ancak form etiketi içinde novalidate özelliği kullanıldığında bu doğrulamalar yapılmaz.
+            -->
+            <div class="form-group">
+              <label>Ad</label>
+              <input type="text" id="name" name="name" placeholder="Adınızı Giriniz..." required minlength="3" maxlength="20"><!--required: Girdi alanının zorunlu (mutlaka doldurulması gereken) olduğunu tanımlar.-->
+            </div>
+            <div class="form-group">
+              <label>Soyad</label>
+              <input type="text" id="surname" name="surname" placeholder="Soyadınızı Giriniz..." required minlength="3" maxlength="20">
+            </div>
+            <div class="form-group">
+              <label>Email Adresi</label>
+              <input type="email" id="email" name="email" placeholder="example123@gmail.com" required>
+            </div>
+            <div class="form-group">
+              <label>Açıklama</label>
+              <textarea style="height: 105px; width: 100%;" id="text" name="açıklama" placeholder="Açıklama Giriniz..." required></textarea>
+            </div>
+            <button type="submit">Kaydol</button>
+          </form>
+      </div>
+    </section>
+    <!-- container-scroller -->
+    <footer>
+      <div class="footer-section">
+        <h4>About Us</h4>
+        <a href="#">Hikayemiz</a>
+        <a href="#">Mizyon & Vizyon</a>
+        <a href="#">Takım</a>
+        <a href="#">Kariyer</a>
+      </div>
+      
+      <div class="footer-section">
+        <h4>Hizmetler</h4>
+        <a href="#">Web Geliştirme</a>
+        <a href="#">Uygulama Geliştirme</a>
+        <a href="#">Tasarım Hizmetleri</a>
+        <a href="#">SEO Optimizasyonu</a>
+    </div>
+    
+    <div class="footer-section">
+        <h4>Destek</h4>
+        <a href="#">Bize Ulaşın</a>
+        <a href="#">SSS</a>
+        <a href="#">Gizlilik Politikası</a>
+        <a href="#">Hizmet Şartları</a>
+    </div>
+    
+      <div class="footer-section">
+        <h4>Follow Us</h4>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook">
+            <i class="fa-brands fa-square-facebook"></i>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <i class="fa-brands fa-square-twitter"></i>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <i class="fa-brands fa-square-instagram"></i>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin"></i>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <script src="js/loginPanel.js"></script>
+    <!-- plugins:js -->
+    <script src="vendors/base/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <script src="vendors/chart.js/Chart.min.js"></script>
+    <script src="vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="js/off-canvas.js"></script>
+    <script src="js/hoverable-collapse.js"></script>
+    <script src="js/template.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="js/dashboard.js"></script>
+    <script src="js/data-table.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+    <script src="js/dataTables.bootstrap4.js"></script>
+    <!-- End custom js for this page-->
+    <script
+      src="https://kit.fontawesome.com/e9a187851c.js"
+      crossorigin="anonymous"
+    ></script>
+    
+    <script src="js/jquery.cookie.js" type="text/javascript"></script>
+
+    <script>
+      let currentStep = 0; // Başlangıç adımı
+
+      function showStep(step) {
+        const steps = document.querySelectorAll(".step");
+        steps.forEach((s, index) => {
+          s.classList.remove("active");
+          if (index === step) {
+            s.classList.add("active");
+          }
+        });
+      }
+
+      function nextStep() {
+        const steps = document.querySelectorAll(".step");
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          showStep(currentStep);
+        }
+      }
+
+      function prevStep() {
+        if (currentStep > 0) {
+          currentStep--;
+          showStep(currentStep);
+        }
+      }
+
+      function swapLocations() {
+        const departure = document.getElementById("departure");
+        const destination = document.getElementById("destination");
+
+        // Değerleri yer değiştir
+        const temp = departure.value;
+        departure.value = destination.value;
+        destination.value = temp;
+      }
+
+      // İlk adımı göster
+      showStep(currentStep);
+    </script>
+  </body>
+</html>

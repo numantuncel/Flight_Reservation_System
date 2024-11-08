@@ -1,0 +1,186 @@
+
+.biletGet {
+  display: flex;
+  justify-content: start;
+  width: 100%;
+  overflow: hidden;
+}
+.biletRadio {
+  width: 100%;
+  display: flex;
+  padding: 10px 10px;
+  border-bottom: 1.5px solid rgb(177, 165, 165);
+  border-radius: 20px 20px 0px 0px;
+}
+
+.biletGetForm {
+  width: 100%;
+}
+.biletInput {
+  width: auto !important;
+  margin-top: 4px;
+  cursor: pointer;
+}
+.biletSpan {
+  padding: 0px 5px;
+}
+.biletLabel {
+  padding: 0px 10px;
+  text-align: center;
+}
+.biletsehirDiv{
+     width: 32%;
+     display: flex;
+     justify-content: space-around;
+     align-items: center;
+}
+
+.sehir {
+  border: none;
+  
+}
+.biletForm {
+    padding: 10px 2px;
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+.biletdateDiv{
+    border-left: 2px solid  #ccc;
+    border-right: 2px solid #ccc;
+    width: 40%;
+    display: flex;
+    margin-right: 5px;
+}
+.biletDate{
+    
+    padding: 10px 15px;
+    border: none !important;
+}
+.yolcuSayısıDiv{
+    display: flex;
+    
+    align-items: center;
+    width: 8%;
+    margin-left: 10px;
+    border: none !important;
+    border-right: 2px solid #ccc !important;
+}
+.yolcuSayısı{
+    border: none !important;
+    text-align: right;
+    cursor: pointer;
+}
+.turnSehir{
+    display:  flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px !important;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    cursor: pointer;
+}
+.lineeLeft{
+    padding: 5px;
+    color: gray;
+}
+.ucusSınıfıDiv{
+    width: 16%;
+}
+select,option{
+    cursor: pointer;
+}
+.biletBulDiv{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.BiletAlBtn{
+  color: black;
+  text-decoration: none;
+  border: 2px solid gray;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+/* Butonun temel stilleri */
+.abtn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  height: 45px;
+  width: 125px;
+  padding: 0;
+  outline: none;
+  overflow: hidden;
+  color: #3498db;
+  transition: color 0.3s ease-out, transform 0.3s ease-out;
+  text-align: center;
+  line-height: 50px;
+  position: relative;
+}
+
+/* Arka planda dalga efekti */
+.abtn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(52, 152, 219, 0.2);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: -1;
+}
+
+/* Hover durumunda animasyon */
+.abtn:hover {
+  color: #000000;
+  transform: scale(1.05);
+}
+
+.abtn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Active (tıklama) durumunda küçülme efekti */
+.abtn:active {
+  transform: scale(0.98);
+}
+/* Takvim günleri */
+.dtpicker .xdsoft_days .xdsoft_day {
+  border-radius: 5px; /* Kenar yuvarlama */
+  padding: 10px; /* İç boşluk */
+  transition: background-color 0.3s; /* Geçiş efekti */
+}
+
+.dtpicker .xdsoft_days .xdsoft_day:hover {
+  background-color: #007bff; /* Hover sırasında arka plan rengi */
+  color: #fff; /* Hover sırasında yazı rengi */
+}
+
+/* Aktif gün için stil */
+.dtpicker .xdsoft_days .xdsoft_day.xdsoft_today {
+  background-color: #ffc107; /* Bugünün tarihi için arka plan rengi */
+  color: #fff; /* Yazı rengi */
+}
+
+/* Seçilen gün için stil */
+.dtpicker .xdsoft_days .xdsoft_day.xdsoft_selected {
+  background-color: #28a745; /* Seçilen gün için arka plan rengi */
+  color: #fff; /* Yazı rengi */
+}
+
+/* Ay ve yıl isimleri için stil */
+.dtpicker .xdsoft_month .xdsoft_label,
+.dtpicker .xdsoft_year .xdsoft_label {
+  font-weight: bold; /* Kalın yazı */
+  font-size: 16px; /* Yazı boyutu */
+  color: #007bff; /* Renk */
+}

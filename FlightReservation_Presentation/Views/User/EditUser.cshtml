@@ -1,0 +1,104 @@
+﻿@model EntityLayer.Concrete.User
+
+
+@{
+    ViewData["Title"] = "EditUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Kullanıcı Güncelleme Sayfası</h3>
+
+<form method="post" enctype="multipart/form-data">
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.ProfilePicture)
+    @Html.HiddenFor(x => x.CreatedAt)
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName, "First Name")
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+    </div>
+    <br />
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName, "Last Name")
+        <span asp-validation-for="LastName" class="text-danger"></span>
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+    </div>
+    <br />
+    
+    <br />
+    <div class="form-group">
+        <label>Mevcut Profil Fotoğrafı</label><br />
+        <img src="@Model.ProfilePicture" alt="Profile Picture" width="100" height="100" /> <!-- Mevcut fotoğrafı göster -->
+        <br />
+        @Html.Label("userPhoto", "Yeni Profil Fotoğrafı Yükle")
+        <input type="file" id="userPhoto" name="userPhoto" asp-for="ProfilePicture" class="form-control" accept="image/*" />
+        <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+    </div>
+    <br />
+    <div class="form-group">
+        @Html.LabelFor(m => m.PhoneNumber, "Phone Number")
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+    </div>
+    <br />
+    <div class="form-group">
+        @Html.LabelFor(m => m.PasswordHash, "Password (MD5 Hash)")
+        <span asp-validation-for="PasswordHash" class="text-danger"></span>
+        @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control" })
+    </div>
+    <br />
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, "Email")
+        <span asp-validation-for="Email" class="text-danger"></span>
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+    </div>
+    <br />
+    <div class="form-group">
+        @Html.LabelFor(m => m.IsEmailVerified, "Email Verified")
+        <span asp-validation-for="IsEmailVerified" class="text-danger"></span>
+        @Html.DropDownListFor(m => m.IsEmailVerified,
+                 new List<SelectListItem>
+        {
+        new SelectListItem { Text = "Yes", Value = "true" },
+        new SelectListItem { Text = "No", Value = "false" }
+        },
+                 new { @class = "form-control" })
+    </div>
+    <br />
+    <div style="width: 17%;">
+        <div class="form-group" style="display: none;">
+            @Html.LabelFor(m => m.CreatedAt, "Hesap Oluşturma Tarihi")
+            <span asp-validation-for="CreatedAt" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.CreatedAt, new
+                {
+                    @class = "form-control",
+                    @readonly = "readonly", // Kullanıcı düzenleyemesin diye readonly yapıyoruz
+                    @type = "text", // Normal bir metin kutusu olacak
+                    @value = TimeZoneInfo.ConvertTimeFromUtc(Model.CreatedAt.AddHours(3), TimeZoneInfo.FindSystemTimeZoneById("Turkey")).ToString("dd.MM.yyyy")
+                })
+        </div>
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(m => m.UpdatedAt, "Last Updated Date")
+            <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.UpdatedAt, new { @class = "form-control", @type = "datetime-local", @id = "updateAt", @readonly = "readonly" })
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</form>
+
+<script>
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Ayı 2 haneli yap
+    const day = String(now.getDate()).padStart(2, '0'); // Günü 2 haneli yap
+    const hours = String(now.getHours()).padStart(2, '0'); // Saati 2 haneli yap
+    const minutes = String(now.getMinutes()).padStart(2, '0'); // Dakikayı 2 haneli yap
+
+    // Oluşturulan tarih formatını ayarla
+    const datetimeLocalFormat = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    // Input alanına atama yap
+    const createdAt = document.getElementById('updateAt');
+    createdAt.value = datetimeLocalFormat;
+</script>

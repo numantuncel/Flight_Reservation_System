@@ -19,7 +19,6 @@
             <th scope="col">#</th>
             <th scope="col">FirstName</th>
             <th scope="col">LastName</th>
-            <th scope="col">UserName</th>
             <th scope="col">Profile Picture</th>
             <th scope="col">Phone Number</th>
             <th scope="col">Şifre</th>
@@ -42,7 +41,7 @@
                 <td>@item.FirstName</td>
                 <td>@item.LastName</td>
                 <td>
-                    <img src="@item.ProfilePicture" alt="Profile Picture" width="50" height="50" />
+                    <img src="~/admin/template/@item.ProfilePicture" alt="Profile Picture" width="50" height="50" />
                 </td> <!-- Profil resmini göstermek için img etiketi -->
                 <td>@item.PhoneNumber</td>
                 <td>@item.PasswordHash</td>

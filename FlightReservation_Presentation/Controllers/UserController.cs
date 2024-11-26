@@ -7,22 +7,21 @@ using FlightReservation_Presentation.Models;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
-using System.Text;
+
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using BusinessLayer.Sifrelemeler;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace FlightReservationSystem_Presentation.Controllers
 {
-    
+    [AllowAnonymous]
     public class UserController : Controller
     {
-        
+
 
         private readonly UserMenager _userMenager;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -36,13 +35,13 @@ namespace FlightReservationSystem_Presentation.Controllers
 
 
         // USER LİSTELEME, EKLEME ,GÜNCELLEME VE SİLME İŞLEMLERİ BAŞLANGIÇ 
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             var values = _userMenager.GetListAll();
             return View(values);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AddUser()
         {
@@ -50,7 +49,7 @@ namespace FlightReservationSystem_Presentation.Controllers
         }
 
 
-       
+
         [HttpPost]
         public async Task<IActionResult> AddUser(User _user, IFormFile userPhoto)
         {
@@ -72,7 +71,7 @@ namespace FlightReservationSystem_Presentation.Controllers
                 if (userPhoto != null && userPhoto.Length > 0)
                 {
                     var fileName = Path.GetFileName(userPhoto.FileName); // Dosya adını al
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName); // Dosya yolu oluştur
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/admin/template/", fileName); // Dosya yolu oluştur
 
                     // Fotoğrafı yükle
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -81,7 +80,7 @@ namespace FlightReservationSystem_Presentation.Controllers
                     }
 
                     // Yüklenen fotoğrafın URL'sini oluştur
-                    _user.ProfilePicture = "/images/" + fileName; // Model'deki 'EventPhoto' alanına URL'yi ekliyoruz.
+                    _user.ProfilePicture = "images/" + fileName; // Model'deki 'EventPhoto' alanına URL'yi ekliyoruz.
                 }
                 // Yeni etkinlik nesnesi oluştur
                 User values = new User()
@@ -114,7 +113,7 @@ namespace FlightReservationSystem_Presentation.Controllers
             }
             return View("AddUser", _user); // Hata varsa aynı sayfayı döndür
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteUser(int id)
         {
             var values = _userMenager.GetById(id);
@@ -122,7 +121,7 @@ namespace FlightReservationSystem_Presentation.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult EditUser(int id)
         {
@@ -154,7 +153,7 @@ namespace FlightReservationSystem_Presentation.Controllers
                 if (userPhoto != null && userPhoto.Length > 0)
                 {
                     var fileName = Path.GetFileName(userPhoto.FileName); // Dosya adını al
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName); // Dosya yolu oluştur
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/admin/template/", fileName); // Dosya yolu oluştur
 
                     // Fotoğrafı yükle
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -163,7 +162,7 @@ namespace FlightReservationSystem_Presentation.Controllers
                     }
 
                     // Yüklenen fotoğrafın URL'sini oluştur
-                    _user.ProfilePicture = "/images/" + fileName; // Model'deki 'EventPhoto' alanına URL'yi ekliyoruz.
+                    _user.ProfilePicture = "images/" + fileName; // Model'deki 'EventPhoto' alanına URL'yi ekliyoruz.
                 }
                 // Yeni etkinlik nesnesi oluştur
 
@@ -175,10 +174,10 @@ namespace FlightReservationSystem_Presentation.Controllers
                     Id = _user.Id,
                     FirstName = _user.FirstName,
                     LastName = _user.LastName,
-                    
+
                     ProfilePicture = _user.ProfilePicture,
                     PhoneNumber = _user.PhoneNumber,
-                    PasswordHash = _user.PasswordHash,
+                    PasswordHash = Md5Sifreleme.ComputeMD5(_user.PasswordHash),
                     Email = _user.Email,
                     IsEmailVerified = _user.IsEmailVerified,
                     CreatedAt = _user.CreatedAt.AddHours(3).ToUniversalTime(),
@@ -207,19 +206,7 @@ namespace FlightReservationSystem_Presentation.Controllers
 
 
 
-
-
-
-        // WEB VE LOGİN İŞLEMLERİ BAŞLANGIÇ
-        [HttpGet]
-        public IActionResult SignUp()
-        {
-            return View();
-
-        }
-
-
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> SignUp(User _user)
         {
@@ -230,14 +217,16 @@ namespace FlightReservationSystem_Presentation.Controllers
                 {
                     FirstName = _user.FirstName,
                     LastName = _user.LastName,
-                  
+
                     PhoneNumber = _user.PhoneNumber,
+                    ProfilePicture = "images/no-user-image.jpg",
                     Email = _user.Email,
                     PasswordHash = Md5Sifreleme.ComputeMD5(_user.PasswordHash),
                     CreatedAt = DateTime.Now.ToUniversalTime(),
                     IsEmailVerified = false, // Başlangıçta doğrulanmamış
-                    RoleUrl = "GenerateRoleId(),",
-                    Role = "User"
+
+                    RoleUrl = RandomUrl_.GenerateComplexRoleId(),
+                    Role = "Admin"
                 };
 
                 _userMenager.Insert(user);
@@ -250,8 +239,9 @@ namespace FlightReservationSystem_Presentation.Controllers
 
                 //// E-posta gönder
                 //await _emailService.SendAsync(user.Email, "Doğrulama E-postası", message);
-
-                return RedirectToAction("UserUI", "Home");
+                
+                TempData["UserEmail"] = user.Email;
+                return RedirectToAction("Web_SignIn", "User");
             }
             catch (Exception error)
             {
@@ -259,6 +249,7 @@ namespace FlightReservationSystem_Presentation.Controllers
             }
             return View();
         }
+
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Web_SignIn()
@@ -270,7 +261,7 @@ namespace FlightReservationSystem_Presentation.Controllers
 
 
         AesSifreleme aesSifreleme = new AesSifreleme();
-
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult Web_SignIn(string Email, string PasswordHash)
         {
@@ -302,7 +293,21 @@ namespace FlightReservationSystem_Presentation.Controllers
 
                     HttpContext.Session.SetString("FullName", existingUser.FirstName + " " + existingUser.LastName);
                     //HttpContext.Session.SetString("RoleId", existingUser.RoleId.ToString());
-                    //HttpContext.Session.SetString("userProfil", existingUser.ProfilePicture);
+
+                    //exiting=mevcut 
+                    //< img src = "/admin/template/@profileImage" alt = "Profile" />
+
+                    //exiting=mevcut 
+
+                    if (existingUser.ProfilePicture==null)
+                    {
+                        HttpContext.Session.SetString("userProfil", "images/no-user-image.jpg");
+                    }
+                    else
+                    {
+                        HttpContext.Session.SetString("userProfil", existingUser.ProfilePicture);
+                    }
+                    
                     // Yönlendirme
 
                     var encryptedRoleId = aesSifreleme.Encrypt(existingUser.RoleUrl);
@@ -310,7 +315,7 @@ namespace FlightReservationSystem_Presentation.Controllers
                     if (existingUser.Role == "Admin")
                     {
                         // Admin sayfasına yönlendir
-                        return RedirectToAction("Index", "Home", new { RoleUrl = encryptedRoleId });
+                        return RedirectToAction("Index", "User", new { RoleUrl = encryptedRoleId });
                     }
                     else
                     {
@@ -347,13 +352,13 @@ namespace FlightReservationSystem_Presentation.Controllers
             string formattedDonusTarihi = string.IsNullOrEmpty(dönüsTarihi) ? null : DateTime.Parse(dönüsTarihi).ToString("yyyy-MM-dd");
 
             // Amadeus API URL'si
-            var apiUrl = "https://test.api.amadeus.com/v2/shopping/flight-offers"; // Uçuş tekliflerini almak için kullanılacak URL.
+            var apiUrl = "https://test.api.amadeus.com/v2/shopping/flight-offers";
 
             // Access token alımı
             //var tokenService = new AmedusToken(); // Amadeus token alımı için bir örnek oluştur.
             //string accessToken = await tokenService.GetAccessToken(_httpClientFactory); // Token almak için asenkron bir çağrı yap.
 
-            string accessToken = "OowAyjhUNDuFTrcj5VuikUTTKhQK";
+            string accessToken = "q6RYaeMvMWxBXv9WV6Q45TAQQj8I";
 
             // Uçuş arama parametrelerini ayarlayın
             var queryParams = new Dictionary<string, object>
@@ -376,6 +381,10 @@ namespace FlightReservationSystem_Presentation.Controllers
                 requestUrl += $"&returnDate={formattedDonusTarihi}"; // Dönüş tarihini sorgu parametrelerine ekle.
             }
 
+
+
+            //using bloğu, IDisposable arayüzünü uygulayan nesneleri otomatik olarak temizler. 
+            //    Örneğin, dosya veya veritabanı bağlantılarını işlem sonrası serbest bırakır.
             // API isteği
             using (var client = _httpClientFactory.CreateClient()) // HTTP istemcisi oluştur.
             {
@@ -389,15 +398,15 @@ namespace FlightReservationSystem_Presentation.Controllers
 
                     // API'den dönen yanıtın yapısına göre TicketModel sınıfını kontrol edin
                     var flightResult = JsonConvert.DeserializeObject<FlightOffersResponse>(jsonResponse); // JSON verisini TicketModel sınıfına deserialize et.
-                    //var segmentCount = flightResult.segment.number.Distinct();
-;                    // Eğer API'den dönen sonuçlarda uçuş yoksa, kullanıcıyı bilgilendirin
+                                                                                                          //var segmentCount = flightResult.segment.number.Distinct();
+                    ;                    // Eğer API'den dönen sonuçlarda uçuş yoksa, kullanıcıyı bilgilendirin
                     if (flightResult?.data == null || !flightResult.data.Any()) // Eğer uçuş bilgileri yoksa.
                     {
                         ViewBag.ErrorMessage = "Uçuş bilgileri bulunamadı. Lütfen farklı kriterlerle tekrar deneyin."; // Hata mesajını ayarla.
                         return View("Web_SignIn"); // Hata sayfasına yönlendir.
                     }
 
-                    return View("SearchFlights", flightResult); // Sonuçları "FlightResults" görünümünde göster.
+                    return View("SearchFlights", flightResult); // Sonuçları "SearchFlights" görünümünde göster.
                 }
                 else // API yanıtı başarısızsa.
                 {
@@ -408,6 +417,13 @@ namespace FlightReservationSystem_Presentation.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+            return RedirectToAction("Web_SignIn","User");
+        }
 
     }
 

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using DataAccessLayer.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DataAccessLayer.Concrete.EntityFramework
 {
@@ -26,7 +27,12 @@ namespace DataAccessLayer.Concrete.EntityFramework
         public User FindByEmail(string email)
         {
             // E-posta adresine göre kullanıcıyı bul
+                //user => user.Email == email, user nesnesinin Email özelliğini alır ve bunun,
+                // metodun parametresi olan email değişkeniyle eşleşip eşleşmediğini kontrol eder.
+                //Bu koşul sağlanırsa, FirstOrDefault bu kullanıcıyı döndürür.
             return _context.Set<User>().FirstOrDefault(user => user.Email == email);
+
+        //user: Bu, lambda ifadesi içinde her bir User nesnesini temsil eden parametredir. 
         }
     }
 }

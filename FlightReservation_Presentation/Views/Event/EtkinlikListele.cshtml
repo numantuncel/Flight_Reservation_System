@@ -1,0 +1,64 @@
+﻿@using EntityLayer.Concrete
+@model List<Event>
+@{
+    ViewData["Title"] = "EtkinlikListele";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int rowNum = 1;
+}
+
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Etkinlik Adı</th>
+            <th scope="col">Açıklama</th>
+            <th scope="col">Başlangıç Tarihi</th>
+            <th scope="col">Bitiş Tarihi</th>
+            <th scope="col">Fotoğraf</th>
+            <th scope="col">Kapasite</th>
+            <th scope="col">Etiketler</th>
+            <th scope="col">Mevcut Durum</th>
+
+            <th scope="col">Sil</th>
+            <th scope="col">Düzenle</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <!-- Dinamik satır numarası -->
+                <td>@item.Id</td>
+                <td>@item.EventName</td>
+                <td>@item.EventDescription</td>
+                <td>@item.StartDate.ToString("dd.MM.yyyy HH:mm")</td> <!-- Başlangıç Tarihi -->
+                <td>@item.EndDate.ToString("dd.MM.yyyy HH:mm")</td> <!-- Bitiş Tarihi -->
+                <td>
+                    <img src="@item.EventPhoto" alt="Etkinlik Fotoğrafı" width="50" height="50" />
+                </td> <!-- Etkinlik fotoğrafını göstermek için img etiketi -->
+                <td>@item.Capacity</td> <!-- Etkinlik Kapasitesi -->
+                <td>
+                    @foreach (var tag in item.Tags)
+                    {
+                        <span class="badge badge-secondary">@tag</span>
+                    }
+                </td> <!-- Etiketler (Tag) listesi -->
+                <td>
+                    @if (item.IsAvailable)
+                    {
+                        <span class="text-success">Mevcut</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Mevcut Değil</span>
+                    }
+                </td> <!-- Mevcut durumu boolean olarak -->
+                <td><a href="/Event/DeleteEvent/@item.Id" class="btn btn-danger">Sil</a></td>
+                <td><a href="/Event/EditEvent/@item.Id" class="btn btn-primary">Düzenle</a></td>
+            </tr>
+            rowNum++;
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Event" asp-action="AddEvent" class="btn btn-primary">Etkinlik Ekle</a>

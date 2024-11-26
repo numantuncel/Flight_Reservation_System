@@ -1,8 +1,11 @@
 ﻿@inject IHttpContextAccessor HttpContextAccessor
-@{
-    var profileImage = HttpContextAccessor.HttpContext.Session.GetString("userProfil") ?? "default.png"; // varsayılan resim
-}
 
+@{
+    // Session'dan profil resmini alıyoruz
+    var profileImage = HttpContextAccessor.HttpContext.Session.GetString("userProfil") ?? "default.png"; // Varsayılan resim
+                                                                                                         // Query parametresinden RoleUrl alıyoruz
+    var roleUrl = HttpContextAccessor.HttpContext.Request.Query["RoleUrl"].ToString();
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,12 +15,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Admin</title>
+    <link rel="stylesheet" href="~/admin/template/css/style.css">
     <!-- plugins:css -->
     <link rel="stylesheet" href="~/admin/template/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="~/admin/template/vendors/base/vendor.bundle.base.css">
     <!-- endinject -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="~/admin/template/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="~/admin/template/images/netUcus.png" />
 </head>
@@ -33,7 +36,7 @@
                     </div>
                     <a class="navbar-brand brand-logo-mini" href="~/admin/template/index.html"><img style="border-radius:50%; width:100%; height:100%;" src="~/admin/template/images/netUcus.png" alt="logo" /></a>
 
-                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <button class="navbar-toggler navbar-toggler align-self-center nhamburger" type="button" data-toggle="minimize">
                         <span class="mdi mdi-sort-variant"></span>
                     </button>
                 </div>
@@ -150,7 +153,7 @@
                     </li>
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-                            <img src="~/admin/template/@profileImage" alt="Profile" />
+                            <img src="/admin/template/@profileImage" alt="Profile" />
                             <span class="nav-profile-name">
                                 @if (HttpContextAccessor.HttpContext.Session.GetString("FullName") != null)
                                 {
@@ -168,10 +171,14 @@
                                 <i class="mdi mdi-settings text-primary"></i>
                                 Settings
                             </a>
-                            <a class="dropdown-item">
-                                <i class="mdi mdi-logout text-primary"></i>
-                                Logout
-                            </a>
+                            <form method="post" asp-action="Logout" asp-controller="User">
+                                <button type="submit" class="dropdown-item" style="background: none; border: none;">
+                                    <i class="mdi mdi-logout text-primary"></i>
+                                    Logout
+                                </button>
+                            </form>
+
+
                         </div>
                     </li>
                 </ul>
@@ -186,20 +193,20 @@
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="UserUI" asp-route-RoleId="@ViewContext.HttpContext.Request.Query["RoleId"]">
+                        <a class="nav-link" asp-controller="User" asp-action="Web_SignIn" asp-route-RoleUrl="@roleUrl">
                             <i class="mdi mdi-home menu-icon"></i>
                             <span class="menu-title">Admin</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="User" asp-action="Index" asp-route-RoleId="@ViewContext.HttpContext.Request.Query["RoleId"]">
+                        <a class="nav-link" asp-controller="User" asp-action="Index" asp-route-RoleUrl="@roleUrl">
 
                             <i class="mdi mdi-account menu-icon"></i>
                             <span class="menu-title">Kullanıcı Yönetimi</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Event" asp-action="EtkinlikListele" asp-route-RoleId="@ViewContext.HttpContext.Request.Query["RoleId"]">
+                        <a class="nav-link" asp-controller="Event" asp-action="EtkinlikListele" asp-route-RoleUrl="@roleUrl">
                             <i class="fa-regular fa-calendar fa-xs menu-icon"></i>
                             <span class="menu-title">Etkinlik Yönetimi</span>
                         </a>
@@ -257,6 +264,9 @@
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
+    <script src="~/admin/template/js/numanLogo.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="https://kit.fontawesome.com/e9a187851c.js" crossorigin="anonymous"></script>
     <script src="~/admin/template/vendors/base/vendor.bundle.base.js"></script>
     <!-- endinject -->
@@ -267,6 +277,8 @@
     <script src="~/admin/template/js/off-canvas.js"></script>
     <script src="~/admin/template/js/hoverable-collapse.js"></script>
     <script src="~/admin/template/js/template.js"></script>
+
+
     <!-- endinject -->
 
 </body>
@@ -276,74 +288,3 @@
 
 
 
-@*
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FlightReservationSystem_Presentation</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/FlightReservationSystem_Presentation.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh;">
-            <h3>Admin Panel</h3>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="">Admin Yönetimi</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="/User/Index">Kullanıcı Yönetimi</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Etkinlik Yönetimi</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Bilet Yönetimi</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Raporlar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Çıkış</a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main content -->
-        <div class="flex-grow-1 p-4">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Admin Panel</a>
-                    <div class="d-flex">
-                        <span class="navbar-text me-3">Hoş geldiniz, Admin!</span>
-                        <a href="#" class="btn btn-outline-primary">Profil</a>
-                    </div>
-                </div>
-            </nav>
-            <div class="container">
-                <main role="main" class="pb-3">
-                    @RenderBody();
-                </main>
-            </div>
-        </div>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
-*@

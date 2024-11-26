@@ -6,23 +6,24 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Razor Runtime Compilation ekleme
+
+
+
 // Servisleri ekleme
 builder.Services.AddRazorPages();
-
 
 builder.Services.AddHttpContextAccessor();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
-//Global Authorization Policy (Tüm kullanýcýlarýn kimlik doðrulamasý gerekecek)
+// Global Authorization Policy (Tüm kullanýcýlarýn kimlik doðrulamasý gerekecek)
 var policy = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
     .Build();
@@ -39,13 +40,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddDbContext<FlightReservation_Context>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//// Baðýmlýlýklarýn eklenmesi
+// Baðýmlýlýklarýn eklenmesi
 builder.Services.AddScoped<IUserDal, EfUserDal>(); // IUserDal ve EfUserDal'ý DI konteynerine ekliyoruz
 builder.Services.AddScoped<UserMenager>(); // UserMenager'ý da ekliyoruz
 
 builder.Services.AddScoped<IEventDal, EfEventDal>();
 builder.Services.AddScoped<EventMenager>();
-// isim taþýma iþlemi
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddSession(options =>
@@ -57,10 +58,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddHttpClient();
 
-
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -76,7 +74,7 @@ app.UseRouting();
 app.UseAuthentication(); // Kimlik doðrulama middleware'i ekleniyor
 app.UseAuthorization();
 
-app.UseSession();// sessionun kullanýlmasý
+app.UseSession(); // Session'un kullanýlmasý
 
 app.MapControllerRoute(
     name: "default",
@@ -89,8 +87,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "Admin",
-    pattern: "Home/Index/{RoleUrl}",
-    defaults: new { controller = "Home", action = "Index" });
+    pattern: "User/Index/{RoleUrl}",
+    defaults: new { controller = "User", action = "Index" });
 
 app.Run();
-

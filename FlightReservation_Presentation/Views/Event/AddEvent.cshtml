@@ -1,0 +1,63 @@
+﻿@model EntityLayer.Concrete.Event
+@{
+    ViewData["Title"] = "AddEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Etkinlik Ekle</h2>
+
+<div style="padding-left: 30px; padding-right: 10px;">
+    <!-- Dış div -->
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            @Html.LabelFor(m => m.EventName, "Etkinlik Adı")
+            <span asp-validation-for="EventName" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.EventName, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.EventDescription, "Açıklama")
+            <span asp-validation-for="EventDescription" class="text-danger"></span>
+            @Html.TextAreaFor(m => m.EventDescription, new { @class = "form-control", rows = 3 })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.StartDate, "Başlangıç Tarihi")
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.EndDate, "Bitiş Tarihi")
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Capacity, "Kapasite")
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.Capacity, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Tags, "Etiketler")
+            <span asp-validation-for="Tags" class="text-danger"></span>
+            @Html.TextBoxFor(m => m.Tags, new { @class = "form-control" })
+            <small class="form-text text-muted">Etiketleri virgül ile ayırarak girebilirsiniz (örn: Teknoloji, Webinar).</small>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("eventPhoto", "Etkinlik Fotoğrafı Yükle")
+            <input type="file" asp-for="EventPhoto" class="form-control" accept="image/*" />
+            <span asp-validation-for="EventPhoto" class="text-danger"></span>
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" asp-for="IsAvailable" class="form-check-input" />
+            @Html.LabelFor(m => m.IsAvailable, new { @class = "form-check-label" })
+            <small class="form-text text-muted">Doluluk Oranı</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Etkinlik Ekle</button>
+    </form>
+</div>

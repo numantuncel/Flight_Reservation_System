@@ -8,7 +8,8 @@ namespace FlightReservation_Presentation.Controllers
     public class HomeController : Controller
     {
         // admin
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();

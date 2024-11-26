@@ -1,8 +1,9 @@
 ﻿@model EntityLayer.Concrete.User
-
 @{
     Layout = null;
+    
 }
+
 
 <!DOCTYPE html>
 <html lang="tr">
@@ -43,44 +44,51 @@
 
     <style>
         .step {
-          display: none; /* Başlangıçta tüm adımları gizle */
+            display: none; /* Başlangıçta tüm adımları gizle */
         }
+
         .active {
-          display: block; /* Aktif adımı göster */
+            display: block; /* Aktif adımı göster */
         }
+
         .button-container {
-          margin-top: 20px;
+            margin-top: 20px;
         }
+
         button {
-          width: 48%;
-          padding: 10px;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
         }
+
         .next-btn {
-          background-color: #007bff;
-          color: white;
+            background-color: #007bff;
+            color: white;
         }
+
         .prev-btn {
-          background-color: #6c757d;
-          color: white;
+            background-color: #6c757d;
+            color: white;
         }
+
         .swap-button {
-          background-color: #28a745;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          padding: 10px;
-          cursor: pointer;
-          margin: 10px 0;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            margin: 10px 0;
         }
+
         .arrow {
-          display: inline-block;
-          font-size: 24px;
-          margin: 0 10px;
-          vertical-align: middle;
-          cursor: pointer;
+            display: inline-block;
+            font-size: 24px;
+            margin: 0 10px;
+            vertical-align: middle;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -335,9 +343,7 @@
                                 <li class="navLink">
                                     <a href="#" class="navLinkA">Anasayfa</a>
                                 </li>
-                                <li class="navLink">
-                                    <a href="#" class="navLinkA">Biletler</a>
-                                </li>
+
                                 <li class="navLink">
                                     <a href="#Event" class="navLinkA">Etkinlikler</a>
                                 </li>
@@ -464,7 +470,8 @@
                                     <form asp-action="Web_SignIn" method="post" style="display:flex; flex-direction:column; color:#ccc; text-align:center">
                                         <label class="labell">
                                             <span>Email</span>
-                                            @Html.TextBoxFor(m => m.Email, new { @class = "inputtt" })
+                                            
+                                            @Html.TextBoxFor(m => m.Email, new { @class = "inputtt", id = "emailInput" })
 
                                         </label>
                                         <label class="labell">
@@ -508,7 +515,7 @@
                                             <label class="labell">
                                                 <span>Surname</span>
                                                 @Html.TextBoxFor(m => m.LastName, new { @class = "inputtt" })
-                                            </label>              
+                                            </label>
                                             <label class="labell">
                                                 <span>Phone Number</span>
                                                 @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "inputtt" })
@@ -521,11 +528,7 @@
                                                 <span>Password</span>
                                                 @Html.TextBoxFor(m => m.PasswordHash, new { @class = "inputtt", })
                                             </label>
-                                            @* type = "password" *@
-                                            @* <label>
-                                            <span>Confirm Password</span>
-                                            @Html.TextBoxFor(m => m.PasswordConfirm, new { @class = "form-control"})
-                                            </label> *@
+
                                             <button type="submit" class="submitt" style="margin-top: 25px !important;">Sign Up</button>
                                         </form>
                                     </div>
@@ -739,47 +742,29 @@
             crossorigin="anonymous"></script>
 
     <script src="~/web-tarafı/template/js/jquery.cookie.js" type="text/javascript"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @{
+        var userEmail = TempData["UserEmail"] as string;
+    }
+    @if (!string.IsNullOrEmpty(userEmail))
+    {
+        <input type="hidden" id="userEmail" value="@userEmail" />
+    }
     <script>
-        let currentStep = 0; // Başlangıç adımı
-
-        function showStep(step) {
-          const steps = document.querySelectorAll(".step");
-          steps.forEach((s, index) => {
-            s.classList.remove("active");
-            if (index === step) {
-              s.classList.add("active");
+        
+        $(document).ready(function () {
+            var userEmail = $("#userEmail").val(); // TempData ile gelen email değeri
+            var loginPanel = $(".loginPanel");
+            if (userEmail) {
+                $("#emailInput").val(userEmail); // Email giriş alanına aktarılıyor
+                loginPanel.show();
             }
-          });
-        }
-
-        function nextStep() {
-          const steps = document.querySelectorAll(".step");
-          if (currentStep < steps.length - 1) {
-            currentStep++;
-            showStep(currentStep);
-          }
-        }
-
-        function prevStep() {
-          if (currentStep > 0) {
-            currentStep--;
-            showStep(currentStep);
-          }
-        }
-
-        function swapLocations() {
-          const departure = document.getElementById("departure");
-          const destination = document.getElementById("destination");
-
-          // Değerleri yer değiştir
-          const temp = departure.value;
-          departure.value = destination.value;
-          destination.value = temp;
-        }
-
-        // İlk adımı göster
-        showStep(currentStep);
+            
+        });
     </script>
+  
+    
+  
+
 </body>
 </html>

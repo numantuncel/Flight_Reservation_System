@@ -1,0 +1,23 @@
+﻿@model EntityLayer.Concrete.Event
+@{
+    ViewData["Title"] = "EditEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>EditEvent</h1>
+
+<form method="post">
+    @Html.HiddenFor(x => x.Id)
+    <div class="form-group">
+        @Html.LabelFor(m => m.EventName, "Event Name")
+        @Html.TextBoxFor(m => m.EventName, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.EventDescription, "EventDescription")
+        @*  <span asp-validation-for="EventDescription" class="text-danger"></span> *@
+        @Html.TextBoxFor(m => m.EventDescription, new { @class = "form-control" })
+    </div>
+
+
+
+</form>

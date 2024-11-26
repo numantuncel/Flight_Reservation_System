@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlightReservationSystem_Presentation.Controllers
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public class EventController : Controller
     {
         private readonly EventMenager _eventMenager;
@@ -104,7 +104,7 @@ namespace FlightReservationSystem_Presentation.Controllers
 
                     throw;
                 }
-            }
+            } 
             else
             {
                 return View();
